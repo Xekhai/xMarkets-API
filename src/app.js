@@ -17,4 +17,4 @@ app.use(limiter); // Use the rate limiter
 app.use("/api", router); // Use your router for all requests starting with /api
 
 // Start server
-app.listen(3000, () => console.log("Server running on port 3000"));
+app.listen(3000, () => console.log("Server running on port 8080"));

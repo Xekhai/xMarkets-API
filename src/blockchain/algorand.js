@@ -247,16 +247,8 @@ async function isAccountOptedIn(assetId, address) {
 async function createUnsignedASATransfer(assetID, amount, sender, receiver) {
   try {
     const suggestedParams = await client.getTransactionParams().do();
-    const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
-      from: sender,
-      to: receiver,
-      assetIndex: assetID,
-      amount: amount,
-      suggestedParams: suggestedParams,
-    });
-    const txnBytes = txn.toByte();
-const txnBase64 = Buffer.from(txnBytes).toString('base64');
-    return txnBase64;
+    console.log(suggestedParams);
+    return suggestedParams;
   } catch (error) {
     console.error(`Error during transaction creation: ${error}`);
     throw error;
