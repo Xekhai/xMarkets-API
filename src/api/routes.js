@@ -16,6 +16,7 @@ const {
   calculateShareSaleAmount,
   calculateSharePurchaseAmount,
 } = require("../markets/marketManager");
+const { isAccountOptedIn } = require("../blockchain/algorand");
 
 const wrapAsync = (fn) => {
   return function (req, res, next) {
@@ -245,6 +246,31 @@ router.get(
   wrapAsync(async (req, res) => {
     const result = await getAllMarkets();
     res.json(result);
+  }),
+);
+
+// Check if account has opted in for an asset
+router.get(
+  "/isAccountOptedIn",
+  [
+    check("assetId")
+      .isInt()
+      .withMessage("Asset ID must be an integer."),
+    check("address")
+      .isString()
+      .isLength({ min: 58, max: 58 })
+      .withMessage("Address must be a string of 58 characters."),
+  ],
+  wrapAsync(async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const assetId = req.query.assetId;
+    const address = req.query.address;
+    const result = await isAccountOptedIn(assetId, address);
+    res.json({ isOptedIn: result });
   }),
 );
 

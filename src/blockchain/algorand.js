@@ -216,6 +216,34 @@ async function verifyAsaTransaction(
   }
 }
 
+async function isAccountOptedIn(assetId, address) {
+  const config = {
+    method: "get",
+    url: `https://testnet-algorand.api.purestake.io/idx2/v2/accounts/${address}`,
+    headers: {
+      accept: "application/json",
+      "x-api-key": process.env.ALGO_API_KEY,
+    },
+  };
+
+  try {
+    let response = await axios(config);
+    let assets = response.data.account.assets;
+
+    for (let i = 0; i < assets.length; i++) {
+      let asset = assets[i];
+      if (asset['asset-id'] === Number(assetId)) {
+        return true;
+      }
+    }
+
+    return false;
+  } catch (error) {
+    console.error(`Error during fetching account assets: ${error}`);
+    throw error;
+  }
+}
+
 module.exports = {
   transferAlgo: (amount, recipient) =>
     transfer(
@@ -250,4 +278,5 @@ module.exports = {
   getAssetHolders,
   verifyPaymentTransaction,
   verifyAsaTransaction,
+  isAccountOptedIn,
 };
