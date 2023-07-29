@@ -254,7 +254,7 @@ async function createUnsignedASATransfer(assetID, amount, sender, receiver) {
       amount: amount,
       suggestedParams: suggestedParams,
     });
-    return txn.toByte();
+    return txn;
   } catch (error) {
     console.error(`Error during transaction creation: ${error}`);
     throw error;
@@ -271,7 +271,7 @@ async function createUnsignedPaymentTransaction(from, to, amount) {
       suggestedParams: params
     });
 
-    return txn.toByte(); // converting transaction to byte
+    return txn;
   } catch (error) {
     console.error(`Error during creating payment transaction: ${error}`);
     throw error;
