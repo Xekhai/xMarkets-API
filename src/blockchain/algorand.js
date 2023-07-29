@@ -244,6 +244,52 @@ async function isAccountOptedIn(assetId, address) {
   }
 }
 
+async function createUnsignedASATransfer(assetID, amount, sender, receiver) {
+  try {
+    const suggestedParams = await client.getTransactionParams().do();
+    const txn = algosdk.makeAssetTransferTxnWithSuggestedParamsFromObject({
+      from: sender,
+      to: receiver,
+      assetIndex: assetID,
+      amount: amount,
+      suggestedParams: suggestedParams,
+    });
+    return txn.toByte();
+  } catch (error) {
+    console.error(`Error during transaction creation: ${error}`);
+    throw error;
+  }
+}
+
+async function createUnsignedPaymentTransaction(from, to, amount) {
+  try {
+    const params = await client.getTransactionParams().do();
+    const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
+      from,
+      to,
+      amount: algosdk.algosToMicroalgos(amount), // converting to microAlgos
+      suggestedParams: params
+    });
+
+    return txn.toByte(); // converting transaction to byte
+  } catch (error) {
+    console.error(`Error during creating payment transaction: ${error}`);
+    throw error;
+  }
+}
+
+async function submitSignedTransaction(signedTxn) {
+  try {
+    const signedTxnDecoded = Buffer.from(signedTxn, "base64");
+    const { txId } = await client.sendRawTransaction(signedTxnDecoded).do();
+    await algosdk.waitForConfirmation(client, txId, 4);
+    return txId;
+  } catch (error) {
+    console.error(`Error during transaction submission: ${error}`);
+    throw error;
+  }
+}
+
 module.exports = {
   transferAlgo: (amount, recipient) =>
     transfer(
@@ -279,4 +325,7 @@ module.exports = {
   verifyPaymentTransaction,
   verifyAsaTransaction,
   isAccountOptedIn,
+  createUnsignedASATransfer,
+  submitSignedTransaction,
+  createUnsignedPaymentTransaction
 };
