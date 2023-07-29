@@ -254,7 +254,9 @@ async function createUnsignedASATransfer(assetID, amount, sender, receiver) {
       amount: amount,
       suggestedParams: suggestedParams,
     });
-    return txn;
+    const txnBytes = txn.toByte();
+const txnBase64 = Buffer.from(txnBytes).toString('base64');
+    return txnBase64;
   } catch (error) {
     console.error(`Error during transaction creation: ${error}`);
     throw error;
@@ -270,8 +272,9 @@ async function createUnsignedPaymentTransaction(from, to, amount) {
       amount: algosdk.algosToMicroalgos(amount), // converting to microAlgos
       suggestedParams: params
     });
-
-    return txn;
+    const txnBytes = txn.toByte();
+const txnBase64 = Buffer.from(txnBytes).toString('base64');
+    return txnBase64;
   } catch (error) {
     console.error(`Error during creating payment transaction: ${error}`);
     throw error;
