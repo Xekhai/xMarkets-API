@@ -244,31 +244,13 @@ async function isAccountOptedIn(assetId, address) {
   }
 }
 
-async function createUnsignedASATransfer(assetID, amount, sender, receiver) {
+async function getTxnParams() {
   try {
     const suggestedParams = await client.getTransactionParams().do();
     console.log(suggestedParams);
     return suggestedParams;
   } catch (error) {
     console.error(`Error during transaction creation: ${error}`);
-    throw error;
-  }
-}
-
-async function createUnsignedPaymentTransaction(from, to, amount) {
-  try {
-    const params = await client.getTransactionParams().do();
-    const txn = algosdk.makePaymentTxnWithSuggestedParamsFromObject({
-      from,
-      to,
-      amount: algosdk.algosToMicroalgos(amount), // converting to microAlgos
-      suggestedParams: params
-    });
-    const txnBytes = txn.toByte();
-const txnBase64 = Buffer.from(txnBytes).toString('base64');
-    return txnBase64;
-  } catch (error) {
-    console.error(`Error during creating payment transaction: ${error}`);
     throw error;
   }
 }
@@ -320,7 +302,6 @@ module.exports = {
   verifyPaymentTransaction,
   verifyAsaTransaction,
   isAccountOptedIn,
-  createUnsignedASATransfer,
+  getTxnParams,
   submitSignedTransaction,
-  createUnsignedPaymentTransaction
 };

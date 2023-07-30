@@ -16,7 +16,7 @@ const {
   calculateShareSaleAmount,
   calculateSharePurchaseAmount,
 } = require("../markets/marketManager");
-const { isAccountOptedIn, createUnsignedASATransfer, createUnsignedPaymentTransaction, submitSignedTransaction } = require("../blockchain/algorand");
+const { isAccountOptedIn, getTxnParams, submitSignedTransaction } = require("../blockchain/algorand");
 
 const wrapAsync = (fn) => {
   return function (req, res, next) {
@@ -82,51 +82,14 @@ router.post(
 
 // Create an unsigned ASA transfer
 router.post(
-  "/createUnsignedASATransfer",
-  [
-    body("assetID").isInt().withMessage("Asset ID must be an integer."),
-    body("amount").isFloat({ min: 0.0 }).withMessage("Amount must be a decimal number greater than or equal to 0.0."),
-    body("sender").isString().isLength({ min: 58, max: 58 }).withMessage("Sender must be a valid ALGO address."),
-    body("receiver").isString().isLength({ min: 58, max: 58 }).withMessage("Receiver must be a valid ALGO address."),
-  ],
+  "/getParams",
   wrapAsync(async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const transactionData = req.body;
-    const result = await createUnsignedASATransfer(
-      transactionData.assetID,
-      transactionData.amount,
-      transactionData.sender,
-      transactionData.receiver
-    );
-    res.json({ unsignedTxn: result });
+    const result = await getTxnParams();
+    res.json({ txnParams: result });
   })
 );
 
-// Create an unsigned Payment Transaction
-router.post(
-  "/createPaymentTransaction",
-  [
-    body("amount").isFloat({ min: 0.0 }).withMessage("Amount must be a decimal number greater than or equal to 0.0."),
-    body("sender").isString().isLength({ min: 58, max: 58 }).withMessage("Sender must be a valid ALGO address."),
-    body("receiver").isString().isLength({ min: 58, max: 58 }).withMessage("Receiver must be a valid ALGO address."),
-  ],
-  wrapAsync(async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
-
-    const { receiver, sender, amount } = req.body;
-    const txn = await createUnsignedPaymentTransaction(receiver, sender, amount);
-    res.json({ unsignedTxn: txn });
-  })
-);
-
-// Submit a signed ASA transfer
+// Submit a signed Txn
 router.post(
   "/submitSignedTransaction",
   [
