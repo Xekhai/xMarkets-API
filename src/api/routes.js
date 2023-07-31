@@ -11,6 +11,7 @@ const {
   createNewMarket,
   getMarketByID,
   getAllMarkets,
+  calculateSharePurchaseCost,
 } = require("../markets/marketManager");
 const {
   calculateShareSaleAmount,
@@ -166,10 +167,10 @@ router.post(
         tradeData.transactionId,
         tradeData.sender,
         tradeData.receiver,
-        tradeData.sharesOrAmount,
+        Number(tradeData.sharesOrAmount),
         tradeData.marketId,
-        tradeData.slippageAllowed,
-        tradeData.expectedSharesOrAlgos,
+        Number(tradeData.slippageAllowed),
+        Number(tradeData.expectedSharesOrAlgos),
         tradeData.shareType,
       );
     } else if (tradeData.tradeType === "purchase") {
@@ -177,10 +178,10 @@ router.post(
         tradeData.transactionId,
         tradeData.sender,
         tradeData.receiver,
-        tradeData.sharesOrAmount,
+        Number(tradeData.sharesOrAmount),
         tradeData.marketId,
-        tradeData.slippageAllowed,
-        tradeData.expectedSharesOrAlgos,
+        Number(tradeData.slippageAllowed),
+        Number(tradeData.expectedSharesOrAlgos),
         tradeData.shareType,
       );
     }
@@ -210,7 +211,7 @@ router.post(
     }
 
     const { marketId, shareType, shares } = req.body;
-    const result = await calculateShareSaleAmount(marketId, shareType, shares);
+    const result = await calculateShareSaleAmount(marketId, shareType, Number(shares));
     res.json({ result });
   }),
 );
@@ -237,10 +238,11 @@ router.post(
     }
 
     const { marketId, shareType, amount } = req.body;
-    const result = await calculateSharePurchaseAmount(
+    const result = await calculateSharePurchaseCost(
       marketId,
       shareType,
-      amount,
+      Number(amount),
+      true
     );
     res.json({ result });
   }),

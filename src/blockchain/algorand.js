@@ -247,10 +247,9 @@ async function isAccountOptedIn(assetId, address) {
 async function getTxnParams() {
   try {
     const suggestedParams = await client.getTransactionParams().do();
-    console.log(suggestedParams);
     return suggestedParams;
   } catch (error) {
-    console.error(`Error during transaction creation: ${error}`);
+    console.error(`Error getting them Params: ${error}`);
     throw error;
   }
 }

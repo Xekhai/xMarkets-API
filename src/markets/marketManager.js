@@ -141,13 +141,14 @@ async function calculateSharePurchaseAmount(marketId, tokenType, AlgoAmount) {
     tokenShares = noShares;
     otherTokenShares = yesShares;
   }
-
   const invariantBefore = Math.cbrt(
     tokenShares * otherTokenShares * AlgoBalance,
   );
   const AlgoBalanceAfter = AlgoBalance + AlgoAmount;
   const newTokenShares =
     Math.pow(invariantBefore, 3) / (otherTokenShares * AlgoBalanceAfter);
+    console.log(AlgoBalance)
+
   const tradeAmount = tokenShares - newTokenShares;
 
   return tradeAmount;
