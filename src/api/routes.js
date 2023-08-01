@@ -17,7 +17,11 @@ const {
   calculateShareSaleAmount,
   calculateSharePurchaseAmount,
 } = require("../markets/marketManager");
-const { isAccountOptedIn, getTxnParams, submitSignedTransaction } = require("../blockchain/algorand");
+const {
+  isAccountOptedIn,
+  getTxnParams,
+  submitSignedTransaction,
+} = require("../blockchain/algorand");
 
 const wrapAsync = (fn) => {
   return function (req, res, next) {
@@ -87,14 +91,16 @@ router.post(
   wrapAsync(async (req, res) => {
     const result = await getTxnParams();
     res.json({ txnParams: result });
-  })
+  }),
 );
 
 // Submit a signed Txn
 router.post(
   "/submitSignedTransaction",
   [
-    body("signedTxn").isString().withMessage("Signed transaction must be a string."),
+    body("signedTxn")
+      .isString()
+      .withMessage("Signed transaction must be a string."),
   ],
   wrapAsync(async (req, res) => {
     const errors = validationResult(req);
@@ -105,7 +111,7 @@ router.post(
     const { signedTxn } = req.body;
     const txId = await submitSignedTransaction(signedTxn);
     res.json({ txId });
-  })
+  }),
 );
 
 // Execute a trade
@@ -185,6 +191,13 @@ router.post(
         tradeData.shareType,
       );
     }
+
+    if (result.success === false) {
+      return res
+        .status(500)
+        .json({ error: "Trade execution failed", details: result });
+    }
+
     res.json(result);
   }),
 );
@@ -211,7 +224,11 @@ router.post(
     }
 
     const { marketId, shareType, shares } = req.body;
-    const result = await calculateShareSaleAmount(marketId, shareType, Number(shares));
+    const result = await calculateShareSaleAmount(
+      marketId,
+      shareType,
+      Number(shares),
+    );
     res.json({ result });
   }),
 );
@@ -242,7 +259,7 @@ router.post(
       marketId,
       shareType,
       Number(amount),
-      true
+      true,
     );
     res.json({ result });
   }),
@@ -282,9 +299,7 @@ router.get(
 router.get(
   "/isAccountOptedIn",
   [
-    check("assetId")
-      .isInt()
-      .withMessage("Asset ID must be an integer."),
+    check("assetId").isInt().withMessage("Asset ID must be an integer."),
     check("address")
       .isString()
       .isLength({ min: 58, max: 58 })

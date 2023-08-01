@@ -85,7 +85,7 @@ async function executeSharePurchase(
       if (currentDate > new Date(marketData.expiryDate)) {
         throw new Error("The market has expired.");
       }
-      
+
       // Calculate the actual shares that will be purchased with the provided Algos
       let calculatedShares = await calculateSharePurchaseAmount(
         marketId,

@@ -1,10 +1,10 @@
 const express = require("express");
 const rateLimit = require("express-rate-limit"); // Import rate limiter
 const router = require("./api/routes"); // Import the router from your routes file
-var cors = require('cors');
+var cors = require("cors");
 
 const app = express();
-app.use(cors());  // Enable CORS for all routes
+app.use(cors()); // Enable CORS for all routes
 
 // Define the rate limiter
 const limiter = rateLimit({

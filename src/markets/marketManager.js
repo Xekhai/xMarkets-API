@@ -147,7 +147,7 @@ async function calculateSharePurchaseAmount(marketId, tokenType, AlgoAmount) {
   const AlgoBalanceAfter = AlgoBalance + AlgoAmount;
   const newTokenShares =
     Math.pow(invariantBefore, 3) / (otherTokenShares * AlgoBalanceAfter);
-    console.log(AlgoBalance)
+  console.log(AlgoBalance);
 
   const tradeAmount = tokenShares - newTokenShares;
 

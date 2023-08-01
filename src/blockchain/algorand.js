@@ -232,7 +232,7 @@ async function isAccountOptedIn(assetId, address) {
 
     for (let i = 0; i < assets.length; i++) {
       let asset = assets[i];
-      if (asset['asset-id'] === Number(assetId)) {
+      if (asset["asset-id"] === Number(assetId)) {
         return true;
       }
     }
